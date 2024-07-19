@@ -8,7 +8,9 @@
   <artifactId>norbo</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>Generate Mybatis-plus boilerplate DAO class with Pluggable Annotation Processing API</description>
+  <description>Generate Mybatis-plus boilerplate DAO class with Pluggable Annotation Processing
+    API
+  </description>
   <url>https://github.com/ddrpa/norbo</url>
 
   <licenses>
@@ -79,6 +81,20 @@
             <id>attach-sources</id>
             <goals>
               <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
             </goals>
           </execution>
         </executions>
