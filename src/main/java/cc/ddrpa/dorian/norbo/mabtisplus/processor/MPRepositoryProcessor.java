@@ -2,7 +2,7 @@ package cc.ddrpa.dorian.norbo.mabtisplus.processor;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
 
-import cc.ddrpa.dorian.norbo.mabtisplus.annotation.GenerateRepository;
+import cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPRepository;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -21,8 +21,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
-@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.GenerateRepository")
-public class GenerateRepositoryProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPRepository")
+public class MPRepositoryProcessor extends AbstractProcessor {
 
     private Elements elementUtils;
     private Filer filer;
@@ -44,11 +44,11 @@ public class GenerateRepositoryProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(
-            GenerateRepository.class)) {
+            MPRepository.class)) {
             if (!annotatedElement.getKind().isClass()) {
                 messager.printMessage(Diagnostic.Kind.ERROR,
                     String.format("Only class can be annotated with @%s",
-                        GenerateRepository.class.getSimpleName()),
+                        MPRepository.class.getSimpleName()),
                     annotatedElement);
             }
             String simpleClassName = String.format("%sRepository",

@@ -1,2 +1,3 @@
-cc.ddrpa.dorian.norbo.mabtisplus.processor.GenerateMapperProcessor
-cc.ddrpa.dorian.norbo.mabtisplus.processor.GenerateRepositoryProcessor
+cc.ddrpa.dorian.norbo.mabtisplus.processor.MPMapperProcessor
+cc.ddrpa.dorian.norbo.mabtisplus.processor.MPRepositoryProcessor
+cc.ddrpa.dorian.norbo.jeecgboot.processor.JeecgBootControllerProcessor

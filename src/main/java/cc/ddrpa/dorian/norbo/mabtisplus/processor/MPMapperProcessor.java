@@ -2,7 +2,7 @@ package cc.ddrpa.dorian.norbo.mabtisplus.processor;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
 
-import cc.ddrpa.dorian.norbo.mabtisplus.annotation.GenerateMapper;
+import cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPMapper;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -21,8 +21,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
-@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.GenerateMapper")
-public class GenerateMapperProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPMapper")
+public class MPMapperProcessor extends AbstractProcessor {
 
     private Elements elementUtils;
     private Filer filer;
@@ -43,11 +43,11 @@ public class GenerateMapperProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(GenerateMapper.class)) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(MPMapper.class)) {
             if (!annotatedElement.getKind().isClass()) {
                 messager.printMessage(Diagnostic.Kind.ERROR,
                     String.format("Only class can be annotated with @%s",
-                        GenerateMapper.class.getSimpleName()),
+                        MPMapper.class.getSimpleName()),
                     annotatedElement);
             }
             String simpleInterfaceName = String.format("%sMapper",
