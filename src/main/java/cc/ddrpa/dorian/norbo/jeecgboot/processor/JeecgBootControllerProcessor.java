@@ -124,7 +124,7 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
                         Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                     .initializer("$T.getLogger($L.class)",
                         ClassName.get("org.slf4j", "LoggerFactory"),
-                        annotatedElement.getSimpleName())
+                        simpleClassName)
                     .build())
                 .addField(FieldSpec.builder(repositoryClassName, repositoryBeanName,
                         Modifier.PRIVATE, Modifier.FINAL)
@@ -133,8 +133,8 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
                     queryPageListMethod(entityClassName, repositoryBeanName, moduleDescription))
                 .addMethod(add(entityClassName, repositoryBeanName, moduleDescription))
                 .addMethod(edit(entityClassName, repositoryBeanName, moduleDescription))
-                .addMethod(delete(entityClassName, repositoryBeanName, moduleDescription))
-                .addMethod(deleteBatch(entityClassName, repositoryBeanName, moduleDescription))
+                .addMethod(delete(repositoryBeanName, moduleDescription))
+                .addMethod(deleteBatch(repositoryBeanName, moduleDescription))
                 .addMethod(queryById(entityClassName, repositoryBeanName, moduleDescription))
                 .addMethod(exportExcel(entityClassName))
                 .addMethod(importExcel(entityClassName))
@@ -164,10 +164,10 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
         String moduleDescription) {
         return MethodSpec.methodBuilder("queryPageList")
             .addJavadoc("分页列表查询\n\n" +
-                "@param plan\n" +
+                "@param entity\n" +
                 "@param pageNo\n" +
                 "@param pageSize\n" +
-                "@param req\n" +
+                "@param request\n" +
                 "@return\n")
             .addAnnotation(AnnotationSpec.builder(JEECG_AUTOLOG_CLASS_NAME)
                 .addMember("value", "$S", String.format("%s-分页列表查询", moduleDescription))
@@ -223,7 +223,6 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
             .build();
     }
 
-
     /**
      * 添加
      *
@@ -236,7 +235,7 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
         String moduleDescription) {
         return MethodSpec.methodBuilder("add")
             .addJavadoc("添加\n\n" +
-                "@param plan\n" +
+                "@param entity\n" +
                 "@return\n")
             .addAnnotation(AnnotationSpec.builder(JEECG_AUTOLOG_CLASS_NAME)
                 .addMember("value", "$S", String.format("%s-添加", moduleDescription)).build())
@@ -272,7 +271,7 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
         String moduleDescription) {
         return MethodSpec.methodBuilder("edit")
             .addJavadoc("编辑\n\n" +
-                "@param plan\n" +
+                "@param entity\n" +
                 "@return\n")
             .addAnnotation(AnnotationSpec.builder(JEECG_AUTOLOG_CLASS_NAME)
                 .addMember("value", "$S", String.format("%s-编辑", moduleDescription)).build())
@@ -281,12 +280,8 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
                     .addMember("summary", "$S", String.format("%s-编辑", moduleDescription))
                     .build())
             .addAnnotation(AnnotationSpec.builder(
-                    ClassName.get("org.springframework.web.bind.annotation", "RequestMapping"))
-                .addMember("value", "$S", "/edit")
-                .addMember("method", "{$T.PUT, $T.POST}",
-                    ClassName.get("org.springframework.web.bind.annotation", "RequestMethod"),
-                    ClassName.get("org.springframework.web.bind.annotation", "RequestMethod"))
-                .build())
+                    ClassName.get("org.springframework.web.bind.annotation", "PostMapping"))
+                .addMember("value", "$S", "/edit").build())
             .addModifiers(Modifier.PUBLIC)
             .returns(ParameterizedTypeName.get(
                 JEECG_RESULT_CLASS_NAME, ClassName.get("java.lang", "String")))
@@ -303,13 +298,11 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
     /**
      * 通过id删除
      *
-     * @param entityClassName
      * @param repositoryBeanName
      * @param moduleDescription
      * @return
      */
-    protected MethodSpec delete(ClassName entityClassName, String repositoryBeanName,
-        String moduleDescription) {
+    protected MethodSpec delete(String repositoryBeanName, String moduleDescription) {
         return MethodSpec.methodBuilder("delete")
             .addJavadoc("通过id删除\n\n" +
                 "@param id\n" +
@@ -342,13 +335,11 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
     /**
      * 批量删除
      *
-     * @param entityClassName
      * @param repositoryBeanName
      * @param moduleDescription
      * @return
      */
-    protected MethodSpec deleteBatch(ClassName entityClassName, String repositoryBeanName,
-        String moduleDescription) {
+    protected MethodSpec deleteBatch(String repositoryBeanName, String moduleDescription) {
         return MethodSpec.methodBuilder("deleteBatch")
             .addJavadoc("批量删除\n\n" +
                 "@param ids\n" +
