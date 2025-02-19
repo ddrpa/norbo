@@ -6,7 +6,7 @@
 
   <groupId>cc.ddrpa.dorian</groupId>
   <artifactId>norbo</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.2</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Generate Mybatis-plus boilerplate DAO class with Pluggable Annotation Processing
     API
@@ -19,6 +19,7 @@
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <name>yufan</name>
@@ -27,6 +28,7 @@
       <organizationUrl>https://yufanonsoftware.me</organizationUrl>
     </developer>
   </developers>
+
   <scm>
     <connection>scm:git:git://github.com/ddrpa/norbo.git</connection>
     <developerConnection>scm:git:ssh://github.com:ddrpa/norbo.git
