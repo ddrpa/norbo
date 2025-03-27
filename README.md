@@ -26,6 +26,22 @@ public class Plan {
 }
 ```
 
+norbo 已经声明了自己是一个 Annotation Processor，因此是开箱即用的。不过如果你在 maven-compiler-plugin 显式地声明了 lombok 等注解处理器，同样也需要在 `<annotationProcessorPaths>` 中声明 norbo。
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>cc.ddrpa.dorian</groupId>
+                <artifactId>norbo</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
+            </path>
+...
+```
+
 执行 `mvn compile` 命令，在 `target/generated-sources/` 中查看生成的代码。
 
 `cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPMapper` 负责生成 Mapper 类。
