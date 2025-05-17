@@ -37,7 +37,7 @@ norbo 已经声明了自己是一个 Annotation Processor，因此是开箱即�
             <path>
                 <groupId>cc.ddrpa.dorian</groupId>
                 <artifactId>norbo</artifactId>
-                <version>0.0.2-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
             </path>
 ...
 ```

@@ -9,4 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface MPRepository {
 
+    String value() default "";
+
+    /**
+     * 显式指定生成类的包名，也可通过 value 指定
+     * <p>
+     * 默认与被修饰类位于同一个包下
+     */
+    String packageName() default "";
 }
