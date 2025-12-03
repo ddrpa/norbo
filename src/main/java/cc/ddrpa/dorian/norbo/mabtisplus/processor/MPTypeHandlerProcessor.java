@@ -42,6 +42,10 @@ public class MPTypeHandlerProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
 
+    public MPTypeHandlerProcessor() {
+        super();
+    }
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);

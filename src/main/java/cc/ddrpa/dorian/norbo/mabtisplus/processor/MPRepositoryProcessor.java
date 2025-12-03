@@ -31,6 +31,10 @@ public class MPRepositoryProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
 
+    public MPRepositoryProcessor() {
+        super();
+    }
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);

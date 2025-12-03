@@ -31,6 +31,10 @@ public class MPMapperProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
 
+    public MPMapperProcessor() {
+        super();
+    }
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);

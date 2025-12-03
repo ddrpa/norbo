@@ -39,6 +39,10 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
 
+    public JeecgBootControllerProcessor() {
+        super();
+    }
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
