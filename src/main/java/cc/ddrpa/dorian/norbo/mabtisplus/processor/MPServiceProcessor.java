@@ -2,7 +2,7 @@ package cc.ddrpa.dorian.norbo.mabtisplus.processor;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
 
-import cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPRepository;
+import cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPService;
 import cc.ddrpa.dorian.norbo.util.AnnotationUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -24,14 +24,14 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
-@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPRepository")
-public class MPRepositoryProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("cc.ddrpa.dorian.norbo.mabtisplus.annotation.MPService")
+public class MPServiceProcessor extends AbstractProcessor {
 
     private Elements elementUtils;
     private Filer filer;
     private Messager messager;
 
-    public MPRepositoryProcessor() {
+    public MPServiceProcessor() {
         super();
     }
 
@@ -51,11 +51,11 @@ public class MPRepositoryProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(
-            MPRepository.class)) {
+            MPService.class)) {
             if (!annotatedElement.getKind().isClass()) {
                 messager.printMessage(Diagnostic.Kind.ERROR,
                     String.format("Only class can be annotated with @%s",
-                        MPRepository.class.getSimpleName()),
+                        MPService.class.getSimpleName()),
                     annotatedElement);
             }
 
@@ -65,15 +65,12 @@ public class MPRepositoryProcessor extends AbstractProcessor {
             ClassName classType = ClassName.get(packageName, simpleClassName);
 
             TypeSpec typeSpec = TypeSpec.classBuilder(classType)
-                .addAnnotation(ClassName.get("org.springframework.stereotype", "Repository"))
+                .addAnnotation(ClassName.get("org.springframework.stereotype", "Service"))
                 .addModifiers(PUBLIC)
                 .superclass(ParameterizedTypeName.get(
-                    ClassName.get("com.baomidou.mybatisplus.spring.repository", "CrudRepository"),
+                    ClassName.get("com.baomidou.mybatisplus.spring.service.impl", "ServiceImpl"),
                     ClassName.get(packageName,
                         String.format("%sMapper", annotatedElement.getSimpleName())),
-                    ClassName.get(annotatedElement.asType())))
-                .addSuperinterface(ParameterizedTypeName.get(
-                    ClassName.get("com.baomidou.mybatisplus.extension.repository", "IRepository"),
                     ClassName.get(annotatedElement.asType())))
                 .build();
             JavaFile file = JavaFile.builder(classType.packageName(), typeSpec).build();
@@ -119,7 +116,7 @@ public class MPRepositoryProcessor extends AbstractProcessor {
      */
     protected String packageName(Element annotatedElement) {
         Optional<AnnotationMirror> mirrorOpt = AnnotationUtils.getAnnotationMirror(
-            annotatedElement, MPRepository.class.getCanonicalName());
+            annotatedElement, MPService.class.getCanonicalName());
         Optional<String> optionalPackageName = mirrorOpt
             .flatMap(mirror -> AnnotationUtils.getAnnotationValue(mirror, "packageName"))
             .flatMap(v -> {

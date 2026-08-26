@@ -4,7 +4,7 @@ Norbo 是一个基于 Java 注解处理器（Pluggable Annotation Processing API
 
 ## 设计思路
 
-在使用 MyBatis-Plus 开发时，每个实体类通常需要配套的 Mapper 接口和 Service 类。Norbo 通过注解处理器在编译期自动生成这些代码，减少重复劳动。
+在使用 MyBatis-Plus 开发时，每个实体类通常需要配套的 Mapper 接口和 Repository（或 Service）类。Norbo 通过注解处理器在编译期自动生成这些代码，减少重复劳动。
 
 核心技术栈：
 
@@ -21,7 +21,7 @@ Norbo 是一个基于 Java 注解处理器（Pluggable Annotation Processing API
 <dependency>
   <groupId>cc.ddrpa.dorian</groupId>
   <artifactId>norbo</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -90,7 +90,7 @@ public interface UserMapper extends BaseMapper<User> {
 
 ### @MPRepository
 
-生成 MyBatis-Plus Service 实现类。
+生成基于 MyBatis-Plus 3.5.9+ 的 `IRepository`/`CrudRepository` 抽象的 Repository 实现类。
 
 **属性**
 
@@ -99,7 +99,9 @@ public interface UserMapper extends BaseMapper<User> {
 | `value` | String | `""` | 生成类的包名 |
 | `packageName` | String | `""` | 同 `value`，优先级更高 |
 
-生成的 Repository 类继承 `ServiceImpl`，并假定同包下存在对应的 Mapper 接口。因此通常需要与 `@MPMapper` 配合使用。
+生成的 Repository 类继承 `CrudRepository` 并实现 `IRepository`，并假定同包下存在对应的 Mapper 接口。因此通常需要与 `@MPMapper` 配合使用。用法与 `IService` 一致。
+
+> 需要 MyBatis-Plus 3.5.9+；如需使用经典的 `IService`/`ServiceImpl` 风格，请改用 `@MPService`。
 
 **示例**
 
@@ -117,7 +119,49 @@ public class User {
 ```java
 package com.example.entity;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.repository.IRepository;
+import com.baomidou.mybatisplus.spring.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class UserRepository extends CrudRepository<UserMapper, User> implements IRepository<User> {
+}
+```
+
+### @MPService
+
+生成基于 MyBatis-Plus 经典 `IService`/`ServiceImpl` 的 `{Entity}Repository` 类。
+
+**属性**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | String | `""` | 生成类的包名 |
+| `packageName` | String | `""` | 同 `value`，优先级更高 |
+
+该注解用于兼容仍依赖经典 `IService`/`ServiceImpl` 风格 API 的已有代码。生成的 Repository 类继承 `ServiceImpl`，并假定同包下存在对应的 Mapper 接口，通常需要与 `@MPMapper` 配合使用。
+
+> 注意：`@MPService` 生成的是 `com.baomidou.mybatisplus.spring.service.impl.ServiceImpl`（MyBatis-Plus 3.5.9+ 的坐标）。在旧版本 MyBatis-Plus 中该类的包名是 `com.baomidou.mybatisplus.extension.service.impl.ServiceImpl`，而不是 `com.baomidou.mybatisplus.spring.service.impl.ServiceImpl`。
+>
+> `@MPService` 是为了兼容已有代码，而不是为了兼容旧版本 MyBatis-Plus。如需兼容旧版本（< 3.5.9）MyBatis-Plus，请使用 `norbo:0.1.1`。
+
+**示例**
+
+```java
+@MPMapper
+@MPService
+public class User {
+    private Long id;
+    private String name;
+}
+```
+
+生成代码：
+
+```java
+package com.example.entity;
+
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -306,14 +350,15 @@ private List<String> tags;
 |------|----------|
 | `@MPMapper` | `{EntityName}Mapper` |
 | `@MPRepository` | `{EntityName}Repository` |
+| `@MPService` | `{EntityName}Repository` |
 | `@MPTypeHandler` | `{TypeName}TypeHandler` |
 | `@JeecgBootController` | `{EntityName}Controller` |
 
 ## 依赖要求
 
 - Java 17+
-- MyBatis-Plus 3.x
-- Spring Framework（用于 `@Service` 注解）
+- MyBatis-Plus 3.5.9+（`@MPRepository` 使用 `IRepository`/`CrudRepository`；`@MPService` 使用经典 `IService`/`ServiceImpl`。如需兼容 MyBatis-Plus < 3.5.9，请使用 `norbo:0.1.1`）
+- Spring Framework（用于 `@Service`/`@Repository` 注解）
 - Jackson（用于 TypeHandler 的 JSON 序列化）
 
 ## 许可证

@@ -6,15 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 生成基于 MyBatis-Plus 3.5.9+ {@code IRepository}/{@code CrudRepository} 抽象的 {@code {Entity}Repository} 类。
+ * 生成基于 MyBatis-Plus {@code IService}/{@code ServiceImpl} 的 {@code {Entity}Repository} 类。
  * <p>
- * 如需使用经典的 {@code IService}/{@code ServiceImpl} 风格，请使用 {@link MPService}。
+ * 用于仍使用经典 IService 风格（而非 3.5.9+ 的 repository 抽象）的项目。
  *
- * @see MPService
+ * @see MPRepository
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
-public @interface MPRepository {
+public @interface MPService {
 
     String value() default "";
 
