@@ -148,9 +148,32 @@ public class JeecgBootControllerProcessor extends AbstractProcessor {
             try {
                 file.writeTo(filer);
             } catch (IOException e) {
-                messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Failed to write file for element",
-                    annotatedElement);
+                if (isFileAlreadyExists(e)) {
+                    // 文件已存在（例如 IDEA 增量编译未清理输出目录时重新生成），按 NOTE 上报并跳过
+                    messager.printMessage(Diagnostic.Kind.NOTE,
+                        "Skipped already-generated file for element " + annotatedElement,
+                        annotatedElement);
+                } else {
+                    messager.printMessage(Diagnostic.Kind.ERROR,
+                        "Failed to write file for element",
+                        annotatedElement);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断 IOException 是否由"目标文件/源文件已存在"引起。
+     * 只有真正的 IO 错误才需要以 ERROR 上报；文件已存在是增量编译时的正常情况。
+     */
+    private static boolean isFileAlreadyExists(IOException e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            String name = t.getClass().getName();
+            if (name.endsWith("FileAlreadyExistsException")
+                || name.endsWith("FilerException")
+                || name.contains("FileAlreadyExists")) {
+                return true;
             }
         }
         return false;
